@@ -1,0 +1,38 @@
+---
+- hosts: webserver
+  tasks:
+  - name: Install httpd
+    package:
+      name: "{{ item }}"
+      state: present
+    loop:
+      - "httpd"
+      - "php"
+
+  - name: Copy Webpage
+    copy:
+      dest: "/var/www/html"
+      src: index.php
+
+  - name: Start httpd service
+    service:
+      name: httpd
+      state: started
+
+- hosts: loadbalancer
+  tasks:
+  - name: Install haproxy
+    package: 
+      name: haproxy
+      state: present
+
+  - name: Copy haproxy.cfg file
+    template: 
+      dest: "/etc/haproxy/haproxy.cfg"
+      src: haproxy.cfg
+
+  - name: Start haproxy service
+    service:
+      name: haproxy
+      state: started 
+    
